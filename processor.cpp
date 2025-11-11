@@ -12,9 +12,11 @@ Result<double> QuestionProcessor::process(const Question &q)
     istringstream ss(q.text);
     string line;
     double last = 0;
+    int lineNumber = 0;
     bool any = false;
     while (std::getline(ss, line)) 
     {
+        ++lineNumber;
         // trim
         auto trim = [](string &s){ while(!s.empty() && isspace((unsigned char)s.front())) s.erase(s.begin()); while(!s.empty() && isspace((unsigned char)s.back())) s.pop_back(); };
         trim(line);
@@ -29,7 +31,10 @@ Result<double> QuestionProcessor::process(const Question &q)
         }
         Parser p(tokens);
         auto ast_r = p.parse_statement();
-        if (!ast_r.ok()) return Result<double>::Err(ast_r.error->message);
+        if (!ast_r.ok()) {
+            std::cerr << "Warning (line" << lineNumber << "): " << ast_r.error->message << std::endl;
+            continue; //skips line with error
+        }
         auto res = eval.eval(ast_r.value);
         if (!res.ok()) return res;
         last = res.value; any = true;

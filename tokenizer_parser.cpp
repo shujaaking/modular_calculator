@@ -9,10 +9,10 @@ using namespace std;
 ASTPtr ASTNode::make_number(double v) { auto p = make_unique<ASTNode>(); p->type = Type::Number; p->number = v; return p; }
 ASTPtr ASTNode::make_number_text(const string &txt) { auto p = make_unique<ASTNode>(); p->type = Type::Number; p->number_text = txt; return p; }
 ASTPtr ASTNode::make_variable(const string &n) { auto p = make_unique<ASTNode>(); p->type = Type::Variable; p->name = n; return p; }
-ASTPtr ASTNode::make_binary(char op, ASTPtr l, ASTPtr r) { auto p = make_unique<ASTNode>(); p->type = Type::Binary; p->op = op; p->left = move(l); p->right = move(r); return p; }
-ASTPtr ASTNode::make_unary(char op, ASTPtr operand) { auto p = make_unique<ASTNode>(); p->type = Type::Unary; p->op = op; p->left = move(operand); return p; }
-ASTPtr ASTNode::make_function(const string &fname, vector<ASTPtr> arguments) { auto p = make_unique<ASTNode>(); p->type = Type::Function; p->name = fname; p->args = move(arguments); return p; }
-ASTPtr ASTNode::make_assign(const string &varname, ASTPtr expr) { auto p = make_unique<ASTNode>(); p->type = Type::Assign; p->name = varname; p->right = move(expr); return p; }
+ASTPtr ASTNode::make_binary(char op, ASTPtr l, ASTPtr r) { auto p = make_unique<ASTNode>(); p->type = Type::Binary; p->op = op; p->left = std::move(l); p->right = std::move(r); return p; }
+ASTPtr ASTNode::make_unary(char op, ASTPtr operand) { auto p = make_unique<ASTNode>(); p->type = Type::Unary; p->op = op; p->left = std::move(operand); return p; }
+ASTPtr ASTNode::make_function(const string &fname, vector<ASTPtr> arguments) { auto p = make_unique<ASTNode>(); p->type = Type::Function; p->name = fname; p->args = std::move(arguments); return p; }
+ASTPtr ASTNode::make_assign(const string &varname, ASTPtr expr) { auto p = make_unique<ASTNode>(); p->type = Type::Assign; p->name = varname; p->right = std::move(expr); return p; }
 
 //Lexer 
 Lexer::Lexer(const string &input) : input_(input), pos_(0) {}
@@ -75,6 +75,30 @@ Token Lexer::next() {
         return Token{TokenKind::Number, s, start};
     }
 
+    //Detect bare hex literals like FF0045 or FACE (me)
+    if (isalpha((unsigned char)c)) {
+        string s;
+        while (pos_ < input_.size() && (isalnum((unsigned char)input_[pos_]) || input_[pos_] == '_')) {
+            s.push_back(input_[pos_]);
+            ++pos_;
+        }
+
+        // Check if token is ALL hex digits (0-9, A-F) and contains at least one A–F
+        bool all_hex = !s.empty() &&
+                       all_of(s.begin(), s.end(), [](unsigned char ch) {
+                           return isxdigit(ch);
+                       });
+        bool has_hex_letter = any_of(s.begin(), s.end(), [](unsigned char ch) {
+            char lower = tolower(ch);
+            return lower >= 'a' && lower <= 'f';
+        });
+
+        if (all_hex && has_hex_letter) {
+            // Implicit bare hex literal
+            return Token{TokenKind::Number, "0x" + s, start};  // add 0x prefix for evaluator
+        }
+        //end of code I added
+
     //Identifiers (variables and functions like sin, cos, etc.)
     if (is_ident_start(c)) {
         string s;
@@ -90,6 +114,7 @@ Token Lexer::next() {
         case '*': return Token{TokenKind::Star, "*", start};
         case '/': return Token{TokenKind::Slash, "/", start};
         case '^': return Token{TokenKind::Caret, "^", start};
+        case '%': return Token{TokenKind::Percent, "%", start}; //new changes
         case '(': return Token{TokenKind::LParen, "(", start};
         case ')': return Token{TokenKind::RParen, ")", start};
         case ',': return Token{TokenKind::Comma, ",", start};
