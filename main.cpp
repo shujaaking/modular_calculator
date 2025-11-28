@@ -9,7 +9,7 @@ using namespace calc;
 
 int main(int argc, char** argv) 
 {
-    cout << "Modular Calculator - reading questions separated by '----'\n";
+    cout << "Calculator - Reading questions separated by '----'\n";
 
     string inputPath = (argc > 1) ? argv[1] : "input.txt";
     string outputPath = "output.txt"; 

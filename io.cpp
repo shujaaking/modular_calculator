@@ -7,7 +7,8 @@
 using namespace calc;
 using namespace std;
 
-string IOHandler::read_file(const string &path) {
+string IOHandler::read_file(const string &path) 
+{
     ifstream ifs(path);
     if (!ifs) return string();
     std::ostringstream ss; ss << ifs.rdbuf();
