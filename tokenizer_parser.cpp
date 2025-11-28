@@ -1,4 +1,3 @@
-//tokenizer_parser.cpp 
 #include "calc.h"
 #include <cctype>
 #include <stdexcept>
@@ -16,16 +15,11 @@ ASTPtr ASTNode::make_assign(const string &varname, ASTPtr expr) { auto p = make_
 
 //Lexer 
 Lexer::Lexer(const string &input) : input_(input), pos_(0) {}
-
 static bool is_ident_start(char c) { return isalpha((unsigned char)c) || c == '_'; }
 static bool is_ident_char(char c) { return isalnum((unsigned char)c) || c == '_'; }
-
 Token Lexer::peek() { size_t save = pos_; Token t = next(); pos_ = save; return t; }
-
-
-
-
-Token Lexer::next() {
+Token Lexer::next() 
+{
     // Skip whitespace
     while (pos_ < input_.size() && isspace((unsigned char)input_[pos_])) ++pos_;
     if (pos_ >= input_.size()) return Token{TokenKind::End, "", pos_};
@@ -38,7 +32,8 @@ Token Lexer::next() {
         string s;
 
         // handle binary or hex prefixes: 0b..., 0x...
-        if (c == '0' && pos_ + 1 < input_.size()) {
+        if (c == '0' && pos_ + 1 < input_.size()) 
+        {
             char n1 = tolower(input_[pos_ + 1]);
             if (n1 == 'b') {
                 s += "0b";
@@ -76,7 +71,8 @@ Token Lexer::next() {
     }
 
     //Identifiers (variables and functions like sin, cos, etc.)
-    if (is_ident_start(c)) {
+    if (is_ident_start(c)) 
+    {
         string s;
         while (pos_ < input_.size() && is_ident_char(input_[pos_])) s.push_back(input_[pos_++]);
         return Token{TokenKind::Ident, s, start};
@@ -84,7 +80,8 @@ Token Lexer::next() {
 
     //Operators
     ++pos_;
-    switch (c) {
+    switch (c) 
+    {
         case '+': return Token{TokenKind::Plus, "+", start};
         case '-': return Token{TokenKind::Minus, "-", start};
         case '*': return Token{TokenKind::Star, "*", start};
@@ -97,14 +94,13 @@ Token Lexer::next() {
         default:  return Token{TokenKind::End, string(1, c), start};
     }
 }
-
-
-// --- Parser ---
+// Parser 
 Parser::Parser(const vector<Token> &tokens) : tokens_(tokens), idx_(0) {}
 Token Parser::peek() const { if (idx_ < tokens_.size()) return tokens_[idx_]; return Token{TokenKind::End, "", 0}; }
 Token Parser::consume() { return (idx_ < tokens_.size())? tokens_[idx_++] : Token{TokenKind::End, "", 0}; }
 
-Result<ASTPtr> Parser::parse_statement() {
+Result<ASTPtr> Parser::parse_statement() 
+{
     // If starts with identifier and next token is '=', treat as assignment
     if (peek().kind == TokenKind::Ident) {
         Token id = consume();
@@ -120,7 +116,8 @@ Result<ASTPtr> Parser::parse_statement() {
 }
 
 // Recursive descent with precedence (parse_expression -> parse_term -> parse_factor -> primary)
-Result<ASTPtr> Parser::parse_expression() {
+Result<ASTPtr> Parser::parse_expression() 
+{
     auto left_r = parse_term(); if (!left_r.ok()) return left_r;
     ASTPtr left = std::move(left_r.value);
     while (true) {
@@ -134,7 +131,8 @@ Result<ASTPtr> Parser::parse_expression() {
     return Result<ASTPtr>::Ok(std::move(left));
 }
 
-Result<ASTPtr> Parser::parse_term() {
+Result<ASTPtr> Parser::parse_term() 
+{
     auto left_r = parse_factor(); if (!left_r.ok()) return left_r;
     ASTPtr left = std::move(left_r.value);
     while (true) {
@@ -148,7 +146,8 @@ Result<ASTPtr> Parser::parse_term() {
     return Result<ASTPtr>::Ok(std::move(left));
 }
 
-Result<ASTPtr> Parser::parse_factor() {
+Result<ASTPtr> Parser::parse_factor() 
+{
     // handle exponentiation right-associative
     auto left_r = parse_primary(); if (!left_r.ok()) return left_r;
     ASTPtr left = std::move(left_r.value);
@@ -160,7 +159,8 @@ Result<ASTPtr> Parser::parse_factor() {
     return Result<ASTPtr>::Ok(std::move(left));
 }
 
-Result<ASTPtr> Parser::parse_primary() {
+Result<ASTPtr> Parser::parse_primary() 
+{
     Token t = peek();
     if (t.kind == TokenKind::Number) {
         consume();
