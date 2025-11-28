@@ -22,7 +22,8 @@ Result<double> QuestionProcessor::process(const Question &q)
         // lex
         Lexer lx(line);
         vector<Token> tokens;
-        while (true) {
+        while (true) 
+        {
             Token t = lx.next();
             tokens.push_back(t);
             if (t.kind == TokenKind::End) break;
