@@ -9,7 +9,7 @@ using namespace calc;
 
 int main(int argc, char** argv) 
 {
-    cout << "\n---------CALCULATOR-------\n"<<">>>>> Reading questions separated by '----'\n";
+    cout << "\n---------CALCULATOR-------------\n"<<">>>>> Reading questions separated by '----'\n";
 
     string inputPath = (argc > 1) ? argv[1] : "input.txt";
     string outputPath = "output.txt"; 
@@ -28,18 +28,20 @@ int main(int argc, char** argv)
     for (auto &q : questions) 
     {
         qn++;
-        cout << "Question: " << qn << "\n";
+        cout << "\nQuestion: " << qn << "\n";
         QuestionProcessor proc;
         auto res = proc.process(q);
 
         std::ostringstream outText;
         outText << "Question: " << qn << "\n";
         outText << q.text << "\n";
+        cout << q.text;
 
         if (res.ok()) 
         {
-            cout << fixed << setprecision(12) << res.value << "\n";
+            cout << "Answer: "<< fixed << setprecision(12) << res.value << "\n";
             outText << "Answer: " << fixed << setprecision(12) << res.value << "\n";
+
         } 
         else 
         {
