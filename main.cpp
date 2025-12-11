@@ -39,8 +39,8 @@ int main(int argc, char** argv)
 
         if (res.ok()) 
         {
-            cout << "Answer: "<< fixed << setprecision(12) << res.value << "\n";
-            outText << "Answer: " << fixed << setprecision(12) << res.value << "\n";
+            cout << "Answer: "<< fixed << setprecision(4) << res.value << "\n";
+            outText << "Answer: " << fixed << setprecision(4) << res.value << "\n";
 
         } 
         else 
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
             cerr << "Error: " << res.error->message << "\n";
             outText << "Error: " << res.error->message << "\n";
         }
-
+        cout << "----------------------------------------\n";
         outText << "----------------------------------------\n";
         IOHandler::write_output(outputPath, outText.str());
     }
