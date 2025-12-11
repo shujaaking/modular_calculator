@@ -36,10 +36,13 @@ int main(int argc, char** argv)
         outText << "Question: " << qn << "\n";
         outText << q.text << "\n";
 
-        if (res.ok()) {
+        if (res.ok()) 
+        {
             cout << fixed << setprecision(12) << res.value << "\n";
             outText << "Answer: " << fixed << setprecision(12) << res.value << "\n";
-        } else {
+        } 
+        else 
+        {
             cerr << "Error: " << res.error->message << "\n";
             outText << "Error: " << res.error->message << "\n";
         }

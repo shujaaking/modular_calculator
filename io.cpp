@@ -15,7 +15,8 @@ string IOHandler::read_file(const string &path)
     return ss.str();
 }
 
-vector<Question> IOHandler::split_questions(const string &file_text) {
+vector<Question> IOHandler::split_questions(const string &file_text) 
+{
     vector<Question> out;
     istringstream ss(file_text);
     string line;
@@ -48,9 +49,11 @@ vector<Question> IOHandler::split_questions(const string &file_text) {
     if (!cur.empty()) { Question q; q.text = cur; q.base = base; out.push_back(q); }
     return out;
 }
-void IOHandler::write_output(const std::string &path, const std::string &content) {
+void IOHandler::write_output(const std::string &path, const std::string &content) 
+{
     ofstream ofs(path, ios::app); // append mode so multiple questions add up
-    if (!ofs) {
+    if (!ofs) 
+    {
         cerr << "ERROR: Could not open output file: " << path << "\n";
         return;
     }
