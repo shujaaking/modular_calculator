@@ -1,50 +1,62 @@
-This is a modular C++ calculator project with separate source files for core operations and reusable components.
-Project Setup and Contribution Guidelines
- ```bash
-1. Clone the repository
-First, clone this repository to your local machine:
-git clone https://github.com/shujaaking/modular_calculator.git
-cd modular_calculator
+Overview
 
-2. Switch to the master branch and pull latest changes
+This is a calculator program written in C++17.  
+It reads multiple math expressions (questions) from a text file, evaluates each one, and outputs both the results and any errors to both the terminal and to an output text file.
 
-Always make sure your local master branch is up to date:
+Each question can contain:
+- Arithmetic operations (`+`, `-`, `*`, `/`, `^`)
+- Variable assignments (`x = 10`)
+- Built-in math functions (`sin()`, `cos()`)
+- Numbers in base 2, 10, or 16
 
-git checkout master
-git pull origin master
+Files and Their Roles
 
-Important: Never make direct changes or commits to the master branch.
-Use your own branch for all development work.
+1. include/calc.h - Header file containing all class and struct declarations (interfaces for Lexer, Parser, Evaluator, IOHandler, etc.). 
+2. main.cpp - Entry point. Reads input, processes questions, displays and saves results. 
+3. io.cpp - Handles reading the input file and writing results to an output file. 
+4. processor.cpp - Coordinates parsing, evaluating, and context handling for each question. 
+5. tokenizer_parser.cpp - Implements the Lexer and Parser for converting text into AST (Abstract Syntax Tree). 
+6. evaluator.cpp - Evaluates expressions and variable assignments. 
 
-3. Create your own branch
+Environment Requirements
 
-Create a new branch for your work.
-Use a descriptive name such as feature-addition, bugfix-division, or update-ui:
+To compile and run this program successfully, ensure you have:
 
-git checkout -b your-branch-name
+- A C++17-compatible compiler, such as:
+  g++ ≥ 7.0
+  clang++ ≥ 6.0
+  MSVC (Visual Studio Build Tools 2019 or newer)
+- Windows, Linux, or macOS
+- Basic console environment (Command Prompt, Terminal, or PowerShell)
 
 
-Example:
+Compilation Instructions
 
-git checkout -b feature-improvements
+From the project directory, run the following command:
 
-4. Make your changes
+On Windows (MSVC):
 
-Edit, build, and test your updates.
-When you’re ready to save your work:
+-cl /std:c++17 /EHsc main.cpp io.cpp processor.cpp tokenizer_parser.cpp evaluator.cpp
 
-git add .
-git commit -m "Describe your change briefly"
-Push your branch to GitHub:
-git push -u origin your-branch-name
+On Linux / macOS (g++):
 
-5. Keeping your branch updated
+-g++ -std=c++17 main.cpp io.cpp processor.cpp tokenizer_parser.cpp evaluator.cpp -o calculator
 
-If others have made changes to master, update your branch with the latest code before merging:
+This creates an executable:
+- `main.exe` (Windows)
+- `./calculator` (Linux/macOS)
 
-git checkout master
-git pull origin master
-git checkout your-branch-name
-git merge master
+Running the Program
 
-Resolve any conflicts, test your code again, and push the updates.
+-Default mode (uses `input.txt` in the same folder):
+  .\main.exe
+
+-Specify a custom input file:
+.\main.exe "C:\path\to\your\inputfile.txt" (be sure to leave a single space between the executable file and the questions file path)
+
+The results will appear on the screen and be saved to `output.txt` (in the same directory where the source files are stored).
+
+
+Input Format:
+
+The input file must contain one or more math questions separated by `----`.

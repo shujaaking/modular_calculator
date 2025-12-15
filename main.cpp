@@ -39,8 +39,8 @@ int main(int argc, char** argv)
 
         if (res.ok()) 
         {
-            cout << "Answer: "<< fixed << setprecision(4) << res.value << "\n";
-            outText << "Answer: " << fixed << setprecision(4) << res.value << "\n";
+            cout << "Answer: "<< fixed << setprecision(2) << res.value << "\n";
+            outText << "Answer: " << fixed << setprecision(2) << res.value << "\n";
 
         } 
         else 
