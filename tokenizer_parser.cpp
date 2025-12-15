@@ -56,18 +56,26 @@ Token Lexer::next()
         }
 
         // Decimal or floating point
+        // Decimal, floating point, or postfix binary (e.g. 1100b)
         bool hasDot = false;
         while (pos_ < input_.size() &&
-               (isdigit((unsigned char)input_[pos_]) || input_[pos_] == '.' || input_[pos_] == '_')) {
+            (isdigit((unsigned char)input_[pos_]) || input_[pos_] == '.' || input_[pos_] == '_')) {
             if (input_[pos_] == '.') {
-                if (hasDot) break; // second dot stops the number
+                if (hasDot) break;
                 hasDot = true;
             }
             if (input_[pos_] != '_') s.push_back(input_[pos_]);
             ++pos_;
         }
 
+        // Check for postfix binary marker 'b' or 'B'
+        if (pos_ < input_.size() && (input_[pos_] == 'b' || input_[pos_] == 'B')) {
+            s.push_back(input_[pos_]);
+            ++pos_;
+        }
+
         return Token{TokenKind::Number, s, start};
+
     }
 
     //Identifiers (variables and functions like sin, cos, etc.)

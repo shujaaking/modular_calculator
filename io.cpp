@@ -37,12 +37,12 @@ vector<Question> IOHandler::split_questions(const string &file_text)
             }
             continue;
         }
-        // detect base header like "base=16" on a line alone
+        // detect base 
         string lower = tline;
         transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c){ return std::tolower(c); });
         if (lower.rfind("base=", 0) == 0) {
             try { base = stoi(lower.substr(5)); } catch(...) { base = 10; }
-            continue; // do not include header in question body
+            continue; 
         }
         cur += line + "\n";
     }
