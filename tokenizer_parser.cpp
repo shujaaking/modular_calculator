@@ -8,10 +8,10 @@ using namespace std;
 ASTPtr ASTNode::make_number(double v) { auto p = make_unique<ASTNode>(); p->type = Type::Number; p->number = v; return p; }
 ASTPtr ASTNode::make_number_text(const string &txt) { auto p = make_unique<ASTNode>(); p->type = Type::Number; p->number_text = txt; return p; }
 ASTPtr ASTNode::make_variable(const string &n) { auto p = make_unique<ASTNode>(); p->type = Type::Variable; p->name = n; return p; }
-ASTPtr ASTNode::make_binary(char op, ASTPtr l, ASTPtr r) { auto p = make_unique<ASTNode>(); p->type = Type::Binary; p->op = op; p->left = move(l); p->right = move(r); return p; }
-ASTPtr ASTNode::make_unary(char op, ASTPtr operand) { auto p = make_unique<ASTNode>(); p->type = Type::Unary; p->op = op; p->left = move(operand); return p; }
-ASTPtr ASTNode::make_function(const string &fname, vector<ASTPtr> arguments) { auto p = make_unique<ASTNode>(); p->type = Type::Function; p->name = fname; p->args = move(arguments); return p; }
-ASTPtr ASTNode::make_assign(const string &varname, ASTPtr expr) { auto p = make_unique<ASTNode>(); p->type = Type::Assign; p->name = varname; p->right = move(expr); return p; }
+ASTPtr ASTNode::make_binary(char op, ASTPtr l, ASTPtr r) { auto p = make_unique<ASTNode>(); p->type = Type::Binary; p->op = op; p->left = std::move(l); p->right = std::move(r); return p; }
+ASTPtr ASTNode::make_unary(char op, ASTPtr operand) { auto p = make_unique<ASTNode>(); p->type = Type::Unary; p->op = op; p->left = std::move(operand); return p; }
+ASTPtr ASTNode::make_function(const string &fname, vector<ASTPtr> arguments) { auto p = make_unique<ASTNode>(); p->type = Type::Function; p->name = fname; p->args = std::move(arguments); return p; }
+ASTPtr ASTNode::make_assign(const string &varname, ASTPtr expr) { auto p = make_unique<ASTNode>(); p->type = Type::Assign; p->name = varname; p->right = std::move(expr); return p; }
 
 //Lexer 
 Lexer::Lexer(const string &input) : input_(input), pos_(0) {}
@@ -95,6 +95,7 @@ Token Lexer::next()
         case '*': return Token{TokenKind::Star, "*", start};
         case '/': return Token{TokenKind::Slash, "/", start};
         case '^': return Token{TokenKind::Caret, "^", start};
+        case '%': return Token{TokenKind::Percent, "%", start}; //new changes
         case '(': return Token{TokenKind::LParen, "(", start};
         case ')': return Token{TokenKind::RParen, ")", start};
         case ',': return Token{TokenKind::Comma, ",", start};
